@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/itemun/restapi/internal/lib/logger/sl"
+	"github.com/itemun/restapi/internal/storage/sqlite"
 	"log/slog"
 	"os"
 
@@ -21,9 +23,13 @@ func main() {
 	log.Info("starting url shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	// TODO: init logger: slog
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to init storage", sl.Err(err))
+		os.Exit(1)
+	}
 
-	// TODO: init storage: sqllite
+	_ = storage
 
 	// TODO: init router: chi, render
 
