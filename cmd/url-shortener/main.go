@@ -1,12 +1,16 @@
 package main
 
 import (
-	"github.com/itemun/restapi/internal/lib/logger/sl"
-	"github.com/itemun/restapi/internal/storage/sqlite"
 	"log/slog"
 	"os"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+
 	"github.com/itemun/restapi/internal/config"
+	"github.com/itemun/restapi/internal/http-server/middleware/logger"
+	"github.com/itemun/restapi/internal/lib/logger/sl"
+	"github.com/itemun/restapi/internal/storage/sqlite"
 )
 
 const (
@@ -30,6 +34,14 @@ func main() {
 	}
 
 	_ = storage
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(mwlogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 
 	// TODO: init router: chi, render
 
